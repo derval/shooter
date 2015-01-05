@@ -227,15 +227,15 @@ class Targeted(Trajectory):
     # Positions and speeds are complex numbers.
     def __init__(self, scene, mobile, params={}):
         Trajectory.__init__(self, scene, mobile, params)
-        self.direction = 0.5-1j  # missiles are fired vertically
+        self.direction = -1j  # missiles are fired vertically
         self.direction /= abs(self.direction)
-        self.max_rotate_speed = 0.1  # degree per pixel traveled
+        self.max_rotate_speed = 0.008  # degree per pixel traveled
         self.last_targeting = scene.now
 
     def next_pos(self, pos, interval, time):
         pos = pos[0] + 1j * pos[1]  # make current position complex
 
-        if self.mobile.target is not None and self.mobile.target.life > 0 and (time - self.last_targeting > 80):
+        if self.mobile.target is not None and self.mobile.target.life > 0 and (time - self.last_targeting > 30):
             target_pos = self.mobile.target.center[0] + 1j * self.mobile.target.center[1]
             rel_pos = target_pos - pos
 

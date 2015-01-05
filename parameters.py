@@ -137,9 +137,10 @@ SHIPORIENTATION = {
 
 EXPLOSIONANIM = {
     'type': 'Film',
-'sprites' : ['ExplA1', 'ExplA2', 'ExplA3', 'ExplA4', 'ExplA5', 'ExplA6', 'ExplA7', 'ExplA8', 'ExplA9', 'ExplA10', 'ExplA11'],
-#~ 'sprites' : ['OOO', 'OOOOO', 'OOOOOOO'],
-    'pulse': 50,
+    # 'sprites' : ['ExplA1', 'ExplA2', 'ExplA3', 'ExplA4', 'ExplA5', 'ExplA6', 'ExplA7', 'ExplA8', 'ExplA9', 'ExplA10', 'ExplA11'],
+    # 'pulse': 50,
+    'sprites' : ['ExplB1', 'ExplB2', 'ExplB3'],
+    'pulse': 110,
     'to_nothing': True
 }
 
@@ -440,8 +441,8 @@ BLAST = {
 }
 
 MISSILESIXTTDIR = {
-    'type': 'TrajectoryDirections',
-    'animations' : param_gen.make_16_films([
+    'type': 'AlignWithDirection',
+    'animations': param_gen.make_16_films([
         ['Rocket A 1a', 'Rocket A 1b'],
         ['Rocket A 2a', 'Rocket A 2b'],
         ['Rocket A 3a', 'Rocket A 3b']], 50)
@@ -454,8 +455,8 @@ MISSILE = {
     'animations': [MISSILESIXTTDIR],
     'effect': {'add_life': -5},
     'layer': BELOWSHIPLAY,
-    'speed': 0.05,
-    'cooldown': 1000,
+    'speed': 0.15,
+    'cooldown': 800,
 }
 
 #weapons
@@ -517,7 +518,7 @@ STALKER = {
     'speed': 0.2,
     'charge_rate': 0.001,
     'life': 20,
-    'weapons': [MISSILE_WEAPON, BLASTER, SPREADER]
+    'weapons': [MISSILE_WEAPON, BLASTER]
 }
 
 INVINCIBLE = SHIP.copy()
@@ -539,8 +540,8 @@ SAUCER = {
 
 
 COPTEREIGHTDIR = {
-    'type': 'Directions',
-    'animations' : [
+    'type': 'FaceTarget',
+    'animations': [
         {
         'type': 'SyncLoop',
         'sprites': ['CopterA 1a', 'CopterA 1b'],
@@ -686,7 +687,7 @@ DEFAULTLEVEL = {
     'music': 'background',
     'nb_enemies': 6,
     'player': PLAYER,
-    'enemy': COPTER
+    'enemy': SAUCER
 }
 
 STRESSLEVEL = {
@@ -703,7 +704,7 @@ CLEBLEVEL = {
     'theme': CLEBARD,
     'sound_pack': MCPACK,
     'background': DESERT,
-    'nb_enemies': 5,
+    'nb_enemies': 7,
     'player': DERVAL
 }
 

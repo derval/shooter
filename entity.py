@@ -1,6 +1,6 @@
 # !/usr/bin/env python
 # -*- coding: utf-8 -*-
-import random, math
+import random, math, cmath
 import movement, tools, parameters
 
 
@@ -452,7 +452,7 @@ class Roll(Anim):
         # set surface
         self.parent.surface = self.sprites[self.state]
 
-class Directions(Anim):
+class FaceTarget(Anim):
     """change surface according to direction toward target"""
     def __init__(self, scene, parent, params={}):
         Anim.__init__(self, scene, parent, params)
@@ -502,15 +502,13 @@ class Directions(Anim):
                 self.current = new_direction
                 self.last_change = time
 
-class TrajectoryDirections(Directions):
-    """change surface according to direction toward target"""
+class AlignWithDirection(FaceTarget):
+    """change surface according to parent direction"""
     def __init__(self, scene, parent, params={}):
-        Directions.__init__(self, scene, parent, params)
+        FaceTarget.__init__(self, scene, parent, params)
     
     def get_angle(self, time):
-        target = self.parent.target
-        #aim at it
-        return self.aim_angle(target)
+        return self.parent.direction
 
 class Projectile(Mobile):
     def __init__(self, scene, parent, params={}):
@@ -554,10 +552,15 @@ class LineBullet(Projectile):
 
 class Missile(Projectile):
     def __init__(self, scene, parent, params={}):
+        # side of launch
+        if not hasattr(parent, 'lastSide'):
+            parent.lastSide = 1
+        parent.lastSide *= -1
         # custom offset
-        params['initial_pos'] = (params['initial_pos'][0]+4, params['initial_pos'][1]+5)
+        params['initial_pos'] = (params['initial_pos'][0]-3+parent.lastSide*8, params['initial_pos'][1])
         # initialize projectile
         Projectile.__init__(self, scene, parent, params)
+        self.margin_proportion = 0.15
         # define missile target
         self.target = None
         self.launch_time = scene.now
@@ -585,21 +588,28 @@ class Missile(Projectile):
             self.target.targeters.append(self)
         
         self.max_speed = self.speed  # missile has to accelerate
-        self.speed = 0.01  # initial speed
+        self.speed = 0.02  # initial speed
         self.acceleration = 0.0003  # pixels per square millisecond
 
         # save 'targeted' trajectory for later use
         self.targeted_trajectory = self.movement
 
         # set initial
-        self.movement = movement.Line(self.scene, self, {'angle': 90})
+        self.movement = movement.Line(self.scene, self, {'angle': parent.lastSide*80})
         self.primary_trajectory = True
 
         # add crosshair
         if hasattr(self.target, 'life'):
             self.crosshair = Follower(scene, self.target, {'name': 'crosshair',
-            'layer': parameters.FRONTLAY})
+                                      'layer': parameters.FRONTLAY})
             self.crosshair.add()
+
+    def get_direction(self):
+        if hasattr(self.movement, 'direction'):
+            return cmath.phase(self.movement.direction)/(2.*math.pi)*360
+        else:
+            return -90
+    direction = property(get_direction)
 
     def remove(self):
         Projectile.remove(self)
