@@ -453,7 +453,7 @@ MISSILE = {
     'type': 'Missile',
     'trajectory': 'Targeted',
     'animations': [MISSILESIXTTDIR],
-    'effect': {'add_life': -5},
+    'effect': {'add_life': -10},
     'layer': BELOWSHIPLAY,
     'speed': 0.15,
     'cooldown': 800,
@@ -687,7 +687,7 @@ DEFAULTLEVEL = {
     'music': 'background',
     'nb_enemies': 6,
     'player': PLAYER,
-    'enemy': SAUCER
+    'enemy': COPTER
 }
 
 STRESSLEVEL = {
@@ -704,7 +704,7 @@ CLEBLEVEL = {
     'theme': CLEBARD,
     'sound_pack': MCPACK,
     'background': DESERT,
-    'nb_enemies': 7,
+    'nb_enemies': 6,
     'player': DERVAL
 }
 

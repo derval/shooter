@@ -229,9 +229,9 @@ class Mobile(Visible):
                 self.movement = targClass(self.scene, self)
 
         self.base_surface = self.surface
-        self.update_frame()
         if 'initial_pos' in params:
             self.center_on(params['initial_pos'])
+        self.update_frame()
 
     def remove(self):
         """remove from scene"""
@@ -312,7 +312,7 @@ class Film(Anim):
         Anim.__init__(self, scene, parent, params)
         self.nb_frames = len(self.sprites)
         self.parent = parent
-        if  not hasattr(self, 'to_nothing'):
+        if not hasattr(self, 'to_nothing'):
             self.to_nothing = False
 
     def update(self, interval, time):
@@ -361,6 +361,7 @@ class SyncLoop(Film):
             self.cumul_dur.append(d + self.cumul_dur[-1])
         self.total_dur = self.cumul_dur[-1]
         self.cumul_dur = self.cumul_dur[:-1]
+        self.parent.surface = self.sprites[0]
 
     def update(self, interval, time):
         # sync durations of anim and time
@@ -452,6 +453,7 @@ class Roll(Anim):
         # set surface
         self.parent.surface = self.sprites[self.state]
 
+
 class FaceTarget(Anim):
     """change surface according to direction toward target"""
     def __init__(self, scene, parent, params={}):
@@ -466,9 +468,9 @@ class FaceTarget(Anim):
             self.anim_instances.append(instance)
         self.nb_directions = len(self.anim_instances)
         self.last_change = 0
-    
+
     def replace_anim(self, new_direction):
-        '''replace current animation of parent'''
+        """replace current animation of parent"""
         # the instanciation of the one dir anim
         instance = self.anim_instances[new_direction]
         # remove precedent anim
@@ -479,7 +481,7 @@ class FaceTarget(Anim):
         
         self.parent.children.append(instance)        
         instance.add()
-    
+
     def sprite_from_angle(self, angle):
         """align with sprite order"""
         angle += 90
@@ -507,7 +509,7 @@ class AlignWithDirection(FaceTarget):
     def __init__(self, scene, parent, params={}):
         FaceTarget.__init__(self, scene, parent, params)
     
-    def get_angle(self, time):
+    def get_angle(self, time=0):
         return self.parent.direction
 
 class Projectile(Mobile):
@@ -557,7 +559,7 @@ class Missile(Projectile):
             parent.lastSide = 1
         parent.lastSide *= -1
         # custom offset
-        params['initial_pos'] = (params['initial_pos'][0]-3+parent.lastSide*8, params['initial_pos'][1])
+        params['initial_pos'] = (params['initial_pos'][0]+parent.lastSide*8, params['initial_pos'][1]+4)
         # initialize projectile
         Projectile.__init__(self, scene, parent, params)
         self.margin_proportion = 0.15
@@ -588,7 +590,7 @@ class Missile(Projectile):
             self.target.targeters.append(self)
         
         self.max_speed = self.speed  # missile has to accelerate
-        self.speed = 0.02  # initial speed
+        self.speed = 0.01  # initial speed
         self.acceleration = 0.0003  # pixels per square millisecond
 
         # save 'targeted' trajectory for later use
@@ -627,7 +629,7 @@ class Missile(Projectile):
             except AttributeError:
                 pass
         if (hasattr(self, 'movement') and self.primary_trajectory
-                and self.scene.now - self.launch_time > 150):
+                and self.scene.now - self.launch_time > 180):
             self.movement = self.targeted_trajectory
             self.primary_trajectory = False
             del self.targeted_trajectory
